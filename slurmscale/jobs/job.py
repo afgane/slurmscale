@@ -7,7 +7,7 @@ class Job(object):
 
     def __init__(self, job):
         """Initialize the Job object."""
-        self.job = job
+        self._job = job
 
     @property
     def id(self):
@@ -17,10 +17,10 @@ class Job(object):
         :rtype: ``int``
         :return: Job ID number.
         """
-        return self.job.get('job_id')
+        return self._job.get('job_id')
 
     @property
-    def job_state(self):
+    def state(self):
         """
         Get the current state of this job as reported by Slurm.
 
@@ -29,7 +29,7 @@ class Job(object):
                  ``CONFIGURING``, ``COMPLETING``, ``COMPLETED``, ``FAILED``,
                  ``TIMEOUT``, ``PREEMPTED``, ``NODE_FAIL`` and ``SPECIAL_EXIT``
         """
-        return pyslurm.job().find_id(str(self.id))[0].get('job_state')
+        return pyslurm._job().find_id(str(self.id))[0].get('job_state')
 
     def show(self):
         """
@@ -40,6 +40,6 @@ class Job(object):
         properties.
 
         :rtype: ``dict``
-        :return: A dictionary containing job details.
+        :return: A dictionary containing job details, as provided by Slurm.
         """
-        return self.job
+        return self._job

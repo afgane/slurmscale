@@ -12,7 +12,7 @@ class Nodes(object):
 
     def __init__(self):
         """Initialize the Nodes object."""
-        self.nodes = pyslurm.node()
+        self._nodes = pyslurm.node()
 
     def list(self, idle=False):
         """
@@ -24,7 +24,7 @@ class Nodes(object):
         :rtype: ``list`` of :class:`.Node`
         :return: A list of ``Node`` objects.
         """
-        slurm_nodes = self.nodes.get()
+        slurm_nodes = self._nodes.get()
         current_nodes = []
 
         for n in slurm_nodes:

@@ -9,9 +9,9 @@ class Jobs(object):
 
     def __init__(self):
         """Initialize the jobs object."""
-        self.jobs = pyslurm.job()
+        self._jobs = pyslurm.job()
 
     def list(self):
         """List the current jobs on the cluster."""
-        current_jobs = self.jobs.get()
+        current_jobs = self._jobs.get()
         return [Job(current_jobs[j]) for j in current_jobs]

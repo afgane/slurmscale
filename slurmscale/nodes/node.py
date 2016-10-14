@@ -6,7 +6,7 @@ class Node(object):
 
     def __init__(self, node):
         """Initialize the current object."""
-        self.node = node
+        self._node = node
 
     def show(self):
         """
@@ -19,4 +19,4 @@ class Node(object):
         :rtype: ``dict``
         :return: A dictionary containing node details.
         """
-        return self.node
+        return self._node
