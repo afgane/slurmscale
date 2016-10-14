@@ -18,8 +18,8 @@ class Nodes(object):
         """
         List the nodes available on the cluster.
 
-        :type subnet_id: ``bool``
-        :param subnet_id: If set, return only IDLE nodes.
+        :type idle: ``bool``
+        :param idle: If set, return only IDLE nodes.
 
         :rtype: ``list`` of :class:`.Node`
         :return: A list of ``Node`` objects.
