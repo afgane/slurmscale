@@ -10,9 +10,10 @@ import slurmscale as ss
 class Nodes(object):
     """A service object to inspect and manage worker nodes."""
 
-    def __init__(self):
-        """Initialize the Nodes object."""
-        self._nodes = pyslurm.node()
+    @property
+    def _nodes(self):
+        """Fetch fresh data."""
+        return pyslurm.node().get()
 
     def list(self, idle=False):
         """
@@ -24,7 +25,7 @@ class Nodes(object):
         :rtype: ``list`` of :class:`.Node`
         :return: A list of ``Node`` objects.
         """
-        slurm_nodes = self._nodes.get()
+        slurm_nodes = self._nodes
         current_nodes = []
 
         for n in slurm_nodes:

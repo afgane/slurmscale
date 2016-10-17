@@ -29,7 +29,7 @@ class Job(object):
                  ``CONFIGURING``, ``COMPLETING``, ``COMPLETED``, ``FAILED``,
                  ``TIMEOUT``, ``PREEMPTED``, ``NODE_FAIL`` and ``SPECIAL_EXIT``
         """
-        return pyslurm._job().find_id(str(self.id))[0].get('job_state')
+        return pyslurm.job().find_id(str(self.id))[0].get('job_state')
 
     def show(self):
         """

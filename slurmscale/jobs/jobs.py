@@ -7,11 +7,12 @@ from job import Job
 class Jobs(object):
     """A service object to inspect jobs."""
 
-    def __init__(self):
-        """Initialize the jobs object."""
-        self._jobs = pyslurm.job()
+    @property
+    def _jobs(self):
+        """Fetch fresh data."""
+        return pyslurm.job().get()
 
     def list(self):
         """List the current jobs on the cluster."""
-        current_jobs = self._jobs.get()
+        current_jobs = self._jobs
         return [Job(current_jobs[j]) for j in current_jobs]

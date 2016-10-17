@@ -64,7 +64,7 @@ class Node(object):
         Show complete details about this node.
 
         *Note* that this method exists primarily for informational purposes.
-        individual job fields should be accessed through the object's
+        individual node fields should be accessed through the object's
         properties.
 
         :rtype: ``dict``
