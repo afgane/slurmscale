@@ -19,6 +19,11 @@ class Node(object):
         """Node state, as reported by Slurm."""
         return self._node.get('state')
 
+    @property
+    def ip(self):
+        """IP address for the node."""
+        return self._node.get('node_addr')
+
     def _set_node_state(self, state, reason=None):
         """Set the node state to the provided argument."""
         node_dict = {
