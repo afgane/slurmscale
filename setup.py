@@ -18,8 +18,8 @@ with open(os.path.join('slurmscale', '__init__.py')) as f:
         if m:
             version = ast.literal_eval(m.group(1))
             break
-
-base_reqs = ['click>=6.6', 'Cython>=0.24.1']  # pyslurm also needed
+# pyslurm is also needed but it can only be installed on a system with Slurm
+base_reqs = ['click>=6.6', 'Cython>=0.24.1', 'cloudbridge']
 dev_reqs = (['tox>=2.3.1', 'sphinx>=1.4.8'] + base_reqs)
 
 setup(name='slurmscale',

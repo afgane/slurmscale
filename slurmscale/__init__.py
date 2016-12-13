@@ -1,8 +1,13 @@
 """Library setup."""
 import logging
+from logging import NullHandler  # Python 2.7+ only
+
+from util import Config
 
 # Current version of the library
 __version__ = '0.1.0'
+
+config = Config()
 
 
 def get_version():
@@ -15,12 +20,15 @@ def get_version():
     return __version__
 
 
-class NullHandler(logging.Handler):
-    """A null handler for the logger."""
-
-    def emit(self, record):
-        """Don't emit a log."""
-        pass
+#
+# ~ Library logging setup
+#
+# By default, do not force any logging by the library. If you want to see the
+# log messages in your scripts, add the following to the top of your script:
+#   import slurmscale
+#   slurmscale.set_stream_logger(__name__)
+#   OR
+#   slurmscale.set_file_logger(__name__, '/tmp/ss.log')
 
 TRACE = 5  # Lower than debug, which is 10
 
@@ -36,26 +44,11 @@ class SSLogger(logging.Logger):
         """Add ``trace`` log level."""
         self.log(TRACE, msg, *args, **kwargs)
 
-# By default, do not force any logging by the library. If you want to see the
-# log messages in your scripts, add the following to the top of your script:
-#   import slurmscale
-#   slurmscale.set_stream_logger(__name__)
-#   OR
-#   slurmscale.set_file_logger(__name__, '/tmp/ss.log')
-
-default_format_string = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+default_format_string = "%(asctime)s %(levelname)s %(name)s: %(message)s"
 logging.setLoggerClass(SSLogger)
 logging.addLevelName(TRACE, "TRACE")
 log = logging.getLogger('slurmscale')
 log.addHandler(NullHandler())
-
-# Convenience functions to set logging to a particular file or stream
-# To enable either of these by default within SlurmScale, add the following
-# at the top of a SlurmScale module:
-#   import slurmscale
-#   slurmscale.set_stream_logger(__name__)
-#   OR
-#   slurmscale.set_file_logger(__name__, '/tmp/ss.log')
 
 
 def set_stream_logger(name, level=TRACE, format_string=None):
