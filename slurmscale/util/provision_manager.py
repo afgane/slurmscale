@@ -152,3 +152,21 @@ class JetstreamIUProvisionManager(ProvisionManager):
         ss.log.info("Instance {0} ({1}) started.".format(
                     inst.name, inst.private_ips[0]))
         return inst
+
+    def delete(self, nodes):
+        """
+        Delete/terminate the supplied virtual machines.
+
+        :type nodes: list of :class:`Node` objects
+        :param nodes: List of nodes to terminate.
+        """
+        instances = self.provider.compute.instances.list()
+        terminate = []
+        for node in nodes:
+            for instance in instances:
+                if (node.ip in instance.private_ips and
+                        node.name == instance.name):
+                    terminate.append(instance)
+        ss.log.info("Deleting instances {0}".format(terminate))
+        for instance in terminate:
+            instance.terminate()

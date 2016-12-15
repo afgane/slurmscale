@@ -119,7 +119,7 @@ class Nodes(object):
         inst = Bunch(name=instance.name, ip=instance.private_ips[0])
         self.configure(self.list() + [inst])
 
-    def remove(self, nodes):
+    def remove(self, nodes, delete=True):
         """
         Remove nodes from the cluster.
 
@@ -129,6 +129,9 @@ class Nodes(object):
         :type nodes: list of :class:`.Node`
         :param nodes: A  list of nodes to remove from the cluster.
 
+        :type delete: ``bool``
+        :param delete: If ``True``, also delete VMs used by the removed nodes.
+
         :rtype: ``bool``
         :return: ``True`` if removal was successful.
         """
@@ -137,7 +140,8 @@ class Nodes(object):
         for node in nodes:
             node.disable(state=pyslurm.NODE_STATE_DOWN)
         self.configure(servers=keep_set)
-        # self._provision_manager.delete(nodes)
+        if delete:
+            self._provision_manager.delete(nodes)
 
     def configure(self, servers):
         """
