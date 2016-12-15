@@ -6,11 +6,14 @@ try:
     from config_config_parser import SafeConfigParser
 except ImportError:  # Python 2
     from ConfigParser import SafeConfigParser
-# By default, use two locations for CloudBridge configuration
+# By default, use three locations for SlurmScale configuration
 SlurmScaleConfigPath = '/etc/slurmscale.ini'
 SlurmScaleConfigLocations = [SlurmScaleConfigPath]
-UserConfigPath = os.path.join(expanduser('~'), '.slurmscale')
+UserConfigPath = os.path.join(expanduser('~'), '.slurmscale.ini')
 SlurmScaleConfigLocations.append(UserConfigPath)
+LibraryConfigPath = os.path.join(
+    os.path.abspath(os.path.dirname(__file__)), "..", "..", 'slurmscale.ini')
+SlurmScaleConfigLocations.append(LibraryConfigPath)
 
 
 class Config(object):

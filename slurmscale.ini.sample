@@ -1,0 +1,27 @@
+#
+# Configuration file for SlurmScale library.
+#
+
+[slurmscale]
+
+# Provider-specific ID of the image to be used for provisioning instances.
+# CentOS-7-x86_64-GenericCloud-1607 on Jetstream IU
+image_id = 1790e5c8-315a-4b9b-8b1f-46e47330d3cc
+
+# Type of virtual machine to launch when creating instances.
+instance_type = m1.large
+
+# Provider-specific ID of the network within which to launch instances.
+# Dev-public network on ..022 JS acct
+network_id = 295cba46-10f0-4fd4-8494-c821c4c4098a
+
+# SSH key pair to use when launching instances. The key pair must exist prior
+# to use.
+key_pair = elasticity_kp
+
+# Security group to use when launching instances. The security group must
+# exist prior to use.
+security_groups = gxy-workers-sg,gxy-sg
+
+# Prefix used when identifying existing cluster nodes and naming new instances.
+node_name_prefix = jetstream-iu-large
