@@ -9,6 +9,14 @@ class Node(object):
         """Initialize the current object."""
         self._node = node
 
+    def __repr__(self):
+        """Return human-readable Node representation."""
+        return "<SS-Node-{0}>".format(self.name)
+
+    def __eq__(self, other):
+        """Compare nodes based on their name and IP."""
+        return self.name == other.name and self.ip == other.ip
+
     @property
     def name(self):
         """Name of the node, as reported by Slurm."""

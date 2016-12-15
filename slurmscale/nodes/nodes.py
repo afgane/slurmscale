@@ -1,6 +1,7 @@
 """Represent and manage nodes of the target cluster."""
 import pyslurm
 import re
+from bunch import Bunch
 
 from .node import Node
 from slurmscale.util.config_manager import ConfigManagerFactory
@@ -33,8 +34,12 @@ class Nodes(object):
                                     ``GalaxyJetstreamIUConfigManager`` is
                                     supported at the moment.
         """
-        self.provision_manager_name = provision_manager_name
-        self.config_manager_name = config_manager_name
+        self._provision_manager_name = provision_manager_name
+        self._config_manager_name = config_manager_name
+        self._provision_manager = ProvisionManagerFactory.get_provision_manger(
+            self._provision_manager_name)
+        self._config_manager = ConfigManagerFactory.get_config_manager(
+            self._config_manager_name)
 
     @property
     def _nodes(self):
@@ -55,11 +60,10 @@ class Nodes(object):
         current_nodes = []
 
         for n in slurm_nodes:
-            if slurm_nodes.get(n).get('state') == 'IDLE':
-                ss.log.trace("node {0} is IDLE".format(n))
-                current_nodes.append(Node(slurm_nodes[n]))
-            elif slurm_nodes.get(n).get('state') == 'IDLE' and not only_idle:
-                ss.log.trace("node {0} is not IDLE".format(n))
+            if only_idle:
+                if slurm_nodes.get(n).get('state') == 'IDLE':
+                    current_nodes.append(Node(slurm_nodes[n]))
+            else:
                 current_nodes.append(Node(slurm_nodes[n]))
         return current_nodes
 
@@ -108,39 +112,47 @@ class Nodes(object):
         :rtype: ``bool``
         :return: ``True`` if adding a node was successful.
         """
-        provision_manager = ProvisionManagerFactory.get_provision_manger(
-            self.provision_manager_name)
         instance_name = self._next_node_name(
             prefix=ss.config.get_config_value('node_name_prefix',
                                               'jetstream-iu-large'))
-        instance = provision_manager.create(instance_name=instance_name)
-        self.configure([instance])
+        instance = self._provision_manager.create(instance_name=instance_name)
+        inst = Bunch(name=instance.name, ip=instance.private_ips[0])
+        self.configure(self.list() + [inst])
 
-    def remove(self, node):
+    def remove(self, nodes):
         """
-        Remove a node from a cluster.
+        Remove nodes from the cluster.
 
-        This will disable the specified node and terminate the underlying
+        This will disable the specified nodes and terminate the underlying
         machine.
 
-        :type node: :class:`.Node`
-        :param node: A node to remove from the cluster.
+        :type nodes: list of :class:`.Node`
+        :param nodes: A  list of nodes to remove from the cluster.
 
         :rtype: ``bool``
         :return: ``True`` if removal was successful.
         """
-        raise NotImplementedError('Nodes.remove not implemented yet.')
+        existing_nodes = set(self.list())
+        keep_set = [node for node in existing_nodes if node not in nodes]
+        for node in nodes:
+            node.disable(state=pyslurm.NODE_STATE_DOWN)
+        self.configure(servers=keep_set)
+        # self._provision_manager.delete(nodes)
 
-    def configure(self, instances=None):
+    def configure(self, servers):
         """
-        (Re)configure cluster nodes.
+        (Re)configure the supplied servers as cluster nodes.
 
-        This step will will run the configuration manager over any known
-        nodes in the cluster plus any supplied instances.
+        This step will will run the configuration manager over the supplied
+        servers and configure them into the current cluster.
 
-        :type instances: list of ``cloudbridge.Instance`` objects
-        :param instances: A list of instances/VMs to configure.
+        Note that the supplied list should contain any existing cluster nodes
+        in addition to any new nodes. Only the supplied list of nodes will be
+        configured as the cluster nodes.
+
+        :type servers: list of objects with ``name`` and ``ip`` properties
+        :param servers: A list of servers to configure. Each element of the
+                        list must be an object (such as ``Node`` or ``Bunch``)
+                        that has ``name`` and ``ip`` fields.
         """
-        config_manager = ConfigManagerFactory.get_config_manager(
-            self.config_manager_name)
-        config_manager.configure(self.list(), instances)
+        self._config_manager.configure(servers)

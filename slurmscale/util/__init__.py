@@ -1,4 +1,4 @@
-"""Utility module for factory classes."""
+"""Utility module for the library."""
 import os
 from os.path import expanduser
 
