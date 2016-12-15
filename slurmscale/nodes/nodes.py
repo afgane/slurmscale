@@ -93,7 +93,9 @@ class Nodes(object):
                 except ValueError as e:
                     ss.log.warn("Value error figuring out suffix {0} for node "
                                 "{1}: {2}".format(suffix, node.name, e))
-        name = "{0}{1}".format(prefix, largest_suffix + 1)
+        # First node number starts at 0
+        suffix = largest_suffix + 1 if largest_suffix else 0
+        name = "{0}{1}".format(prefix, suffix)
         ss.log.debug("Next node name: {0}".format(name))
         return name
 
