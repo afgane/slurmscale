@@ -4,7 +4,8 @@ from .ansible import InventoryFile
 # from .ansible.api import AnsibleRunner
 from .ansible.cmd import AnsibleRunner
 
-import slurmscale as ss
+import logging
+log = logging.getLogger(__name__)
 
 
 class ConfigManagerFactory(object):
@@ -60,7 +61,7 @@ class GalaxyJetstreamIUConfigManager(ConfigManager):
         :param instances: A list of objects representing the target nodes.
         """
         nodes = []
-        ss.log.trace("Configuring servers {0}".format(servers))
+        log.debug("Configuring servers {0}".format(servers))
         # Format server info into a dict
         for server in servers:
             nodes.append({'name': server.name, 'ip': server.ip})
@@ -69,7 +70,7 @@ class GalaxyJetstreamIUConfigManager(ConfigManager):
                           'infrastructure-playbook/jetstreamiuenv/inv')
         InventoryFile.create(inventory_path, nodes)
         # Run ansible-playbook
-        ss.log.info("Starting to configure nodes via ansible-playbook.")
+        log.info("Starting to configure nodes via ansible-playbook.")
         runner = AnsibleRunner(
             inventory_filename=inventory_path,
             playbook_path=('/opt/slurm_cloud_provision/'

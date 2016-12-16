@@ -2,7 +2,8 @@
 from os.path import join
 import subprocess
 
-import slurmscale as ss
+import logging
+log = logging.getLogger(__name__)
 
 
 class AnsibleRunner(object):
@@ -31,5 +32,5 @@ class AnsibleRunner(object):
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
         (out, err) = p.communicate()
         p_status = p.wait()
-        ss.log.trace("Playbook stdout: %s\nstatus: %s" % (out, p_status))
+        log.debug("Playbook stdout: %s\nstatus: %s" % (out, p_status))
         return (p_status, out)

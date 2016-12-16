@@ -11,6 +11,9 @@ from paramiko.ssh_exception import SSHException
 
 import slurmscale as ss
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class ProvisionManagerFactory(object):
     """A factory for provision managers."""
@@ -58,15 +61,7 @@ class JetstreamIUProvisionManager(ProvisionManager):
         self.provider = CloudProviderFactory().create_provider(
             ProviderList.OPENSTACK, {})
 
-        # ~/.slurmscale config file needed
-        # [slurmscale]
-        # # CentOS-7-x86_64-GenericCloud-1607 on Jetstream IU
-        # image_id = 1790e5c8-315a-4b9b-8b1f-46e47330d3cc
-        # instance_type = m1.large
-        # # Dev-public network on ..022 JS acct
-        # network_id = 295cba46-10f0-4fd4-8494-c821c4c4098a
-        # key_pair = elasticity_kp
-        # security_groups = gxy-workers-sg,gxy-sg
+        # Configs come from slurmscale.ini config file
         self.image_id = ss.config.get_config_value(
             'image_id', '1790e5c8-315a-4b9b-8b1f-46e47330d3cc')
         self.instance_type = ss.config.get_config_value(
@@ -123,7 +118,7 @@ class JetstreamIUProvisionManager(ProvisionManager):
             return True
         except (BadHostKeyException, AuthenticationException,
                 SSHException, socket.error) as e:
-            ss.log.trace("ssh connection exception for {0}: {1}".format(ip, e))
+            log.warn("ssh connection exception for {0}: {1}".format(ip, e))
         self._remove_known_host(ip)
         return False
 
@@ -140,17 +135,17 @@ class JetstreamIUProvisionManager(ProvisionManager):
         img = self.provider.compute.images.get(self.image_id)
         lc = self.provider.compute.instances.create_launch_config()
         lc.add_network_interface(self.network_id)
-        ss.log.info("Starting a new instance named {0}".format(instance_name))
+        log.info("Starting a new instance named {0}".format(instance_name))
         inst = self.provider.compute.instances.create(
             name=instance_name, image=img, instance_type=self.instance_type,
             key_pair=self.key_pair, security_groups=self.security_groups,
             launch_config=lc)
         inst.wait_till_ready()
         while not self._check_ssh(inst.private_ips[0]):
-            ss.log.trace("Waiting for ssh on {0}...".format(inst.name))
+            log.debug("Waiting for ssh on {0}...".format(inst.name))
             time.sleep(5)
-        ss.log.info("Instance {0} ({1}) started.".format(
-                    inst.name, inst.private_ips[0]))
+        log.info("Instance {0} ({1}) started.".format(
+                 inst.name, inst.private_ips[0]))
         return inst
 
     def delete(self, nodes):
@@ -167,6 +162,6 @@ class JetstreamIUProvisionManager(ProvisionManager):
                 if (node.ip in instance.private_ips and
                         node.name == instance.name):
                     terminate.append(instance)
-        ss.log.info("Deleting instances {0}".format(terminate))
+        log.info("Deleting instances {0}".format(terminate))
         for instance in terminate:
             instance.terminate()

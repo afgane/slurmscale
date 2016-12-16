@@ -8,7 +8,9 @@ from slurmscale.util.config_manager import ConfigManagerFactory
 from slurmscale.util.provision_manager import ProvisionManagerFactory
 
 import slurmscale as ss
-ss.set_stream_logger(__name__)  # Uncomment to enable logging
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class Nodes(object):
@@ -91,12 +93,12 @@ class Nodes(object):
                     if suffix > largest_suffix:
                         largest_suffix = suffix
                 except ValueError as e:
-                    ss.log.warn("Value error figuring out suffix {0} for node "
-                                "{1}: {2}".format(suffix, node.name, e))
+                    log.warn("Value error figuring out suffix {0} for node "
+                             "{1}: {2}".format(suffix, node.name, e))
         # First node number starts at 0
         suffix = largest_suffix + 1 if largest_suffix else 0
         name = "{0}{1}".format(prefix, suffix)
-        ss.log.debug("Next node name: {0}".format(name))
+        log.debug("Next node name: {0}".format(name))
         return name
 
     def add(self):

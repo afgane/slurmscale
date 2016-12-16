@@ -1,12 +1,15 @@
 """Library setup."""
 import logging
-from logging import NullHandler  # Python 2.7+ only
+import logging.config
+import os
+import yaml
 
 from util import Config
 
 # Current version of the library
 __version__ = '0.1.0'
 
+lib_root_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..")
 config = Config()
 
 
@@ -20,62 +23,20 @@ def get_version():
     return __version__
 
 
-#
-# ~ Library logging setup
-#
-# By default, do not force any logging by the library. If you want to see the
-# log messages in your scripts, add the following to the top of your script:
-#   import slurmscale
-#   slurmscale.set_stream_logger(__name__)
-#   OR
-#   slurmscale.set_file_logger(__name__, '/tmp/ss.log')
-
-TRACE = 5  # Lower than debug, which is 10
-
-
-class SSLogger(logging.Logger):
+def logpath(filename, max_bytes=0, backup_count=0):
     """
-    A custom logger, adds logging level below debug.
+    Configure file log handler.
 
-    Add a ``trace`` log level, numeric value 5: ``log.trace("Log message")``
+    Check the official docs for explanation of the fields:
+    https://docs.python.org/2/library/logging.config.html#user-defined-objects
     """
+    if not os.path.isabs(filename):
+        filename = os.path.join(lib_root_path, filename)
+    return logging.handlers.RotatingFileHandler(
+        filename, maxBytes=max_bytes, backupCount=backup_count)
 
-    def trace(self, msg, *args, **kwargs):
-        """Add ``trace`` log level."""
-        self.log(TRACE, msg, *args, **kwargs)
-
-default_format_string = "%(asctime)s %(levelname)s %(name)s: %(message)s"
-logging.setLoggerClass(SSLogger)
-logging.addLevelName(TRACE, "TRACE")
-log = logging.getLogger('slurmscale')
-log.addHandler(NullHandler())
-
-
-def set_stream_logger(name, level=TRACE, format_string=None):
-    """A convenience method to set the global logger to stream."""
-    global log
-    if not format_string:
-        format_string = default_format_string
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    fh = logging.StreamHandler()
-    fh.setLevel(level)
-    formatter = logging.Formatter(format_string)
-    fh.setFormatter(formatter)
-    logger.addHandler(fh)
-    log = logger
-
-
-def set_file_logger(name, filepath, level=logging.INFO, format_string=None):
-    """A convenience method to set the global logger to a file."""
-    global log
-    if not format_string:
-        format_string = default_format_string
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    fh = logging.FileHandler(filepath)
-    fh.setLevel(level)
-    formatter = logging.Formatter(format_string)
-    fh.setFormatter(formatter)
-    logger.addHandler(fh)
-    log = logger
+# Read log config from a YAML file
+log_conf = os.path.join(lib_root_path, 'logging.yaml')
+with open(log_conf, 'r') as f:
+    logging.config.dictConfig(yaml.load(f))
+log = logging.getLogger()

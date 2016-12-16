@@ -1,0 +1,43 @@
+---
+version: 1
+formatters:
+    ssFormater:
+        format: "%(asctime)s %(module)17s#L%(lineno)d: %(message)s"
+
+handlers:
+    console:
+        class: logging.StreamHandler
+        formatter: ssFormater
+        level: DEBUG
+        stream: ext://sys.stdout
+    file:
+        (): slurmscale.logpath
+        formatter: ssFormater
+        level: WARNING
+        max_bytes: 104857600 # 100MB
+        backup_count: 3
+        # absolute path or path relative to the library install path
+        filename: slurmscale.log
+
+loggers:
+  # Control individual SlurmScale modules, as desired
+  # logger name can be renamed higher up in the module hierarchy to apply
+  # more generally, for example ``slurmscale.nodes`` or ``slurmscale``.
+  # slurmscale.nodes.nodes:
+  #   level: INFO
+
+  # Control 3rd party libs
+  keystoneclient:
+    level: WARNING
+  novaclient:
+    level: WARNING
+  cloudbridge:
+    level: WARNING
+  paramiko:
+    level: WARNING
+
+root:
+    # Can be a level or a numeric value
+    # https://docs.python.org/2/library/logging.html#logging-levels
+    level: DEBUG
+    handlers: [console, file]

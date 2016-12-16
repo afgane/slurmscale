@@ -3,8 +3,8 @@ import pyslurm
 
 from partition import Partition
 
-import slurmscale as ss
-# ss.set_stream_logger(__name__)  # Uncomment to enable logging
+import logging
+log = logging.getLogger(__name__)
 
 
 class Partitions(object):
@@ -25,6 +25,6 @@ class Partitions(object):
         current_partitions = self._partitions
         partitions = []
         for key in current_partitions.iterkeys():
-            ss.log.trace("Adding partition {0} to .list".format(key))
+            log.debug("Adding partition {0} to .list".format(key))
             partitions.append(Partition(current_partitions[key]))
         return partitions
