@@ -130,8 +130,8 @@ class Nodes(object):
         This will disable the specified nodes and terminate the underlying
         machine.
 
-        :type nodes: list of :class:`.Node`
-        :param nodes: A  list of nodes to remove from the cluster.
+        :type nodes: list of :class:`.Node` or a single :class:`.Node` object
+        :param nodes: Node(s) to remove from the cluster.
 
         :type delete: ``bool``
         :param delete: If ``True``, also delete VMs used by the removed nodes.
@@ -139,6 +139,8 @@ class Nodes(object):
         :rtype: ``bool``
         :return: ``True`` if removal was successful.
         """
+        if not isinstance(nodes, list):
+            nodes = [nodes]
         existing_nodes = set(self.list())
         keep_set = [node for node in existing_nodes if node not in nodes]
         for node in nodes:
