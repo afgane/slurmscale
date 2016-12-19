@@ -121,7 +121,8 @@ class Nodes(object):
                                               'jetstream-iu-large'))
         instance = self._provision_manager.create(instance_name=instance_name)
         inst = Bunch(name=instance.name, ip=instance.private_ips[0])
-        self.configure(self.list() + [inst])
+        ret_code, _ = self.configure(self.list() + [inst])
+        return True if ret_code == 0 else False
 
     def remove(self, nodes, delete=True):
         """
@@ -145,9 +146,13 @@ class Nodes(object):
         keep_set = [node for node in existing_nodes if node not in nodes]
         for node in nodes:
             node.disable(state=pyslurm.NODE_STATE_DOWN)
-        self.configure(servers=keep_set)
-        if delete:
+        ret_code, _ = self.configure(servers=keep_set)
+        if ret_code == 0 and delete:
+            log.debug("Reconfigured the cluster without node(s) {0}; deleting "
+                      "the node(s) now.".format(nodes))
             self._provision_manager.delete(nodes)
+            return True
+        return False
 
     def configure(self, servers):
         """
@@ -164,5 +169,8 @@ class Nodes(object):
         :param servers: A list of servers to configure. Each element of the
                         list must be an object (such as ``Node`` or ``Bunch``)
                         that has ``name`` and ``ip`` fields.
+
+        :rtype: tuple of ``str``
+        :return: A tuple with the process exit code and stdout.
         """
-        self._config_manager.configure(servers)
+        return self._config_manager.configure(servers)

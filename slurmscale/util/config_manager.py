@@ -59,6 +59,9 @@ class GalaxyJetstreamIUConfigManager(ConfigManager):
 
         :type instances: list of ``CloudBridge.Instance`` objects
         :param instances: A list of objects representing the target nodes.
+
+        :rtype: tuple of ``str``
+        :return: A tuple with the process exit code and stdout.
         """
         nodes = []
         log.debug("Configuring servers {0}".format(servers))
@@ -77,4 +80,4 @@ class GalaxyJetstreamIUConfigManager(ConfigManager):
                            'infrastructure-playbook/jetstreamiuenv/'
                            'playbook.yml'),
             venv_path='/opt/slurm_cloud_provision')
-        runner.run()
+        return runner.run()
