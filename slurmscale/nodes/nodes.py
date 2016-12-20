@@ -16,8 +16,7 @@ log = logging.getLogger(__name__)
 class Nodes(object):
     """A service object to inspect and manage worker nodes."""
 
-    def __init__(self, provision_manager_name='JetstreamIUProvisionManager',
-                 config_manager_name='GalaxyJetstreamIUConfigManager'):
+    def __init__(self, provision_manager_name=None, config_manager_name=None):
         """
         Initialize manager names.
 
@@ -36,8 +35,10 @@ class Nodes(object):
                                     ``GalaxyJetstreamIUConfigManager`` is
                                     supported at the moment.
         """
-        self._provision_manager_name = provision_manager_name
-        self._config_manager_name = config_manager_name
+        self._provision_manager_name = ss.config.get_config_value(
+            'provision_manager_name', 'JetstreamIUProvisionManager')
+        self._config_manager_name = ss.config.get_config_value(
+            'config_manager_name', 'GalaxyJetstreamIUConfigManager')
         self._provision_manager = ProvisionManagerFactory.get_provision_manger(
             self._provision_manager_name)
         self._config_manager = ConfigManagerFactory.get_config_manager(
@@ -105,13 +106,11 @@ class Nodes(object):
         """
         Add a new node into the cluster.
 
-        This method will provision a new instance from a cloud provider and
+        This method will provision a new server from a cloud provider and
         configure it for use with the cluster.
 
         TODO:
          - Allow a number of nodes to be added in one request
-         - Allow type of instance to be specified, appropriately updating node
-           name
 
         :rtype: ``bool``
         :return: ``True`` if adding a node was successful.
@@ -140,6 +139,7 @@ class Nodes(object):
         :rtype: ``bool``
         :return: ``True`` if removal was successful.
         """
+        log.debug("Removing nodes {0}".format(nodes))
         if not isinstance(nodes, list):
             nodes = [nodes]
         existing_nodes = set(self.list())
