@@ -77,21 +77,20 @@ libary method has a doctring with usage details so refer to those for the
 details. Here is an example of usage:
 
 ```
-from slurmscale import jobs as ssjobs
-from slurmscale import nodes as ssnodes
-from slurmscale import partitions as sspartitions
+import slurmscale.jobs
+import slurmscale.nodes
+import slurmscale.partitions
 
-jobs = ssjobs.Jobs()
+jobs = slurmscale.jobs.Jobs()
 jobs.list()
 
-nodes = ssnodes.Nodes()
+nodes = slurmscale.nodes.Nodes()
 nodes.list()
 
-partitions = sspartitions.Partitions()
+partitions = slurmscale.partitions.Partitions()
 partitions.list()
 
-nodes.add()
-node = nodes.list()[-1]
+node = nodes.add()
 node.state
 nodes.remove(node)
 ```
