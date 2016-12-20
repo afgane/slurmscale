@@ -1,7 +1,8 @@
 """Represent and manage nodes of the target cluster."""
-import pyslurm
 import re
 from bunch import Bunch
+
+import pyslurm
 
 from .node import Node
 from slurmscale.util.config_manager import ConfigManagerFactory
@@ -70,6 +71,28 @@ class Nodes(object):
                 current_nodes.append(Node(slurm_nodes[n]))
         return current_nodes
 
+    def get(self, name=None, ip=None):
+        """
+        Return a object representing the node identified by one of the args.
+
+        It's necessary to supply only one argument. If both are supplied, the
+        name takes precedence.
+
+        :type name: ``str``
+        :param name: Name of the node to try and get.
+
+        :type ip: ``str``
+        :param ip: IP address of the node to try and get.
+
+        :rtype: object of :class:`.Node` or ``None``
+        :return: An object representing the node, or None if a matching node
+                 cannot be found.
+        """
+        for node in self.list():
+            if name == node.name or ip == node.ip:
+                return node
+        return None
+
     def _next_node_name(self, prefix):
         """
         Get the next logical node name.
@@ -112,8 +135,8 @@ class Nodes(object):
         TODO:
          - Allow a number of nodes to be added in one request
 
-        :rtype: ``bool``
-        :return: ``True`` if adding a node was successful.
+        :rtype: object of :class:`.Node` or None
+        :return: Return a handle to the new node that was added.
         """
         instance_name = self._next_node_name(
             prefix=ss.config.get_config_value('node_name_prefix',
@@ -121,7 +144,9 @@ class Nodes(object):
         instance = self._provision_manager.create(instance_name=instance_name)
         inst = Bunch(name=instance.name, ip=instance.private_ips[0])
         ret_code, _ = self.configure(self.list() + [inst])
-        return True if ret_code == 0 else False
+        if ret_code == 0:
+            return self.get(name=instance_name)
+        return None
 
     def remove(self, nodes, delete=True):
         """
