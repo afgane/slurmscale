@@ -4,6 +4,8 @@ from .ansible import InventoryFile
 # from .ansible.api import AnsibleRunner
 from .ansible.cmd import AnsibleRunner
 
+import slurmscale as ss
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -45,12 +47,17 @@ class ConfigManager(object):
 class GalaxyJetstreamIUConfigManager(ConfigManager):
     """Config manager for Galaxy node configuration on Jetstream at IU."""
 
+    def __init__(self):
+        """Initialize the object with variables from config file."""
+        self._inventory_path = ss.config.get_config_value(
+            'ansible_invnentory_path', None)
+        self._playbook_path = ss.config.get_config_value(
+            'ansible_playbook_path', None)
+        self._venv_path = ss.config.get_config_value('config_venv_path', None)
+
     def configure(self, servers):
         """
         Configure the supplied servers.
-
-        TODO:
-            - Make the paths configurable
 
         :type servers: list of objects with ``name`` and ``ip`` properties
         :param servers: A list of servers to configure. Each element of the
@@ -69,15 +76,11 @@ class GalaxyJetstreamIUConfigManager(ConfigManager):
         for server in servers:
             nodes.append({'name': server.name, 'ip': server.ip})
         # Create the inventory file
-        inventory_path = ('/opt/slurm_cloud_provision/'
-                          'infrastructure-playbook/jetstreamiuenv/inv')
-        InventoryFile.create(inventory_path, nodes)
+        InventoryFile.create(self._inventory_path, nodes)
         # Run ansible-playbook
         log.info("Starting to configure nodes via ansible-playbook.")
         runner = AnsibleRunner(
-            inventory_filename=inventory_path,
-            playbook_path=('/opt/slurm_cloud_provision/'
-                           'infrastructure-playbook/jetstreamiuenv/'
-                           'playbook.yml'),
-            venv_path='/opt/slurm_cloud_provision')
+            inventory_filename=self._inventory_path,
+            playbook_path=self._playbook_path,
+            venv_path=self._venv_path)
         return runner.run()

@@ -4,6 +4,12 @@
 
 [slurmscale]
 
+# Name of the provision manager class used during the provisioning step
+provision_manager_name = JetstreamIUProvisionManager
+
+# Name of the config manager class used for the configuration step
+config_manager_name = GalaxyJetstreamIUConfigManager
+
 # Provider-specific ID of the image to be used for provisioning instances.
 # CentOS-7-x86_64-GenericCloud-1607 on Jetstream IU
 image_id = 1790e5c8-315a-4b9b-8b1f-46e47330d3cc
@@ -25,3 +31,13 @@ security_groups = gxy-workers-sg,gxy-sg
 
 # Prefix used when identifying existing cluster nodes and naming new instances.
 node_name_prefix = jetstream-iu-large
+
+# Path where the inventory file will be stored for the Ansible playbook used
+# as the configuration step.
+ansible_invnentory_path = /opt/slurm_cloud_provision/infrastructure-playbook/jetstreamiuenv/inv
+
+# Path for the Ansible playbook to be used by the configuration step
+ansible_playbook_path = /opt/slurm_cloud_provision/infrastructure-playbook/jetstreamiuenv/playbook.yml
+
+# Path to the virtual environment used by the configuration step
+config_venv_path = /opt/slurm_cloud_provision
