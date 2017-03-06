@@ -133,13 +133,11 @@ class JetstreamIUProvisionManager(ProvisionManager):
         :return: Launched instance object.
         """
         img = self.provider.compute.images.get(self.image_id)
-        lc = self.provider.compute.instances.create_launch_config()
-        lc.add_network_interface(self.network_id)
         log.info("Starting a new instance named {0}".format(instance_name))
         inst = self.provider.compute.instances.create(
             name=instance_name, image=img, instance_type=self.instance_type,
             key_pair=self.key_pair, security_groups=self.security_groups,
-            launch_config=lc)
+            network=self.network_id)
         inst.wait_till_ready()
         while not self._check_ssh(inst.private_ips[0]):
             log.debug("Waiting for ssh on {0}...".format(inst.name))
