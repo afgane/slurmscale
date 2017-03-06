@@ -1,4 +1,5 @@
 """A set of classes used to configure resources into Slurm nodes."""
+import os
 
 from .ansible import InventoryFile
 # from .ansible.api import AnsibleRunner
@@ -49,10 +50,14 @@ class GalaxyJetstreamIUConfigManager(ConfigManager):
 
     def __init__(self):
         """Initialize the object with variables from config file."""
-        self._inventory_path = ss.config.get_config_value(
-            'ansible_invnentory_path', None)
-        self._playbook_path = ss.config.get_config_value(
-            'ansible_playbook_path', None)
+        self._playbook_root = ss.config.get_config_value(
+            'ansible_playbook_root', None)
+        self._inventory_path = os.path.join(
+            self._playbook_root, ss.config.get_config_value(
+                'ansible_inventory', None))
+        self._playbook_path = os.path.join(
+            self._playbook_root, ss.config.get_config_value(
+                'ansible_playbook', None))
         self._venv_path = ss.config.get_config_value('config_venv_path', None)
 
     def configure(self, servers):
@@ -80,6 +85,7 @@ class GalaxyJetstreamIUConfigManager(ConfigManager):
         # Run ansible-playbook
         log.info("Starting to configure nodes via ansible-playbook.")
         runner = AnsibleRunner(
+            playbook_root=self._playbook_root,
             inventory_filename=self._inventory_path,
             playbook_path=self._playbook_path,
             venv_path=self._venv_path)

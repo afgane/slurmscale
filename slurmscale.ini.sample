@@ -32,12 +32,15 @@ security_groups = gxy-workers-sg,gxy-sg
 # Prefix used when identifying existing cluster nodes and naming new instances.
 node_name_prefix = jetstream-iu-large
 
+# Root path for the Ansible playbook
+ansible_playbook_root = /opt/slurm_cloud_provision/infrastructure-playbook
+
 # Path where the inventory file will be stored for the Ansible playbook used
 # as the configuration step.
-ansible_invnentory_path = /opt/slurm_cloud_provision/infrastructure-playbook/jetstreamiuenv/inv
+ansible_inventory = jetstreamiuenv/inv
 
 # Path for the Ansible playbook to be used by the configuration step
-ansible_playbook_path = /opt/slurm_cloud_provision/infrastructure-playbook/jetstreamiuenv/playbook.yml
+ansible_playbook = jetstreamiuenv/playbook.yml
 
 # Path to the virtual environment used by the configuration step
 config_venv_path = /opt/slurm_cloud_provision
