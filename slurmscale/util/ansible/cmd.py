@@ -25,7 +25,7 @@ class AnsibleRunner(object):
         :rtype: tuple of ``str``
         :return: A tuple with the process exit code and stdout.
         """
-        cmd = "cd {0} && ansible-playbook -i {0} {1}".format(
+        cmd = "cd {0} && ansible-playbook -i {1} {2}".format(
             self.playbook_root, self.inventory_filename, self.playbook_path)
         if self.venv_path:
             cmd = "source {0};{1}".format(join(self.venv_path, 'bin/activate'),
