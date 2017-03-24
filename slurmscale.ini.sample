@@ -18,8 +18,8 @@ image_id = 1790e5c8-315a-4b9b-8b1f-46e47330d3cc
 instance_type = m1.large
 
 # Provider-specific ID of the network within which to launch instances.
-# Dev-public network on ..022 JS acct
-network_id = 295cba46-10f0-4fd4-8494-c821c4c4098a
+# gxy-subnet on ..022 JS acct
+network_id = 04d0dbf2-c5c2-4c23-b9a9-16f9038f8dac
 
 # SSH key pair to use when launching instances. The key pair must exist prior
 # to use.

@@ -66,8 +66,8 @@ class JetstreamIUProvisionManager(ProvisionManager):
             'image_id', '1790e5c8-315a-4b9b-8b1f-46e47330d3cc')
         self.instance_type = ss.config.get_config_value(
             'instance_type', 'm1.large')
-        self.network_id = ss.config.get_config_value(
-            'network_id', '295cba46-10f0-4fd4-8494-c821c4c4098a')
+        self.subnet_id = ss.config.get_config_value(
+            'subnet_id', '04d0dbf2-c5c2-4c23-b9a9-16f9038f8dac')
         self.key_pair = ss.config.get_config_value(
             'key_pair', 'elasticity_kp')
         self.security_groups = ss.config.get_config_value(
@@ -137,7 +137,7 @@ class JetstreamIUProvisionManager(ProvisionManager):
         inst = self.provider.compute.instances.create(
             name=instance_name, image=img, instance_type=self.instance_type,
             key_pair=self.key_pair, security_groups=self.security_groups,
-            network=self.network_id)
+            subnet=self.subnet_id)
         inst.wait_till_ready()
         while not self._check_ssh(inst.private_ips[0]):
             log.debug("Waiting for ssh on {0}...".format(inst.name))

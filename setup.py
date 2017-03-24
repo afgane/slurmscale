@@ -3,7 +3,8 @@ import ast
 import os
 import re
 import sys
-from setuptools import setup, find_packages
+from setuptools import find_packages
+from setuptools import setup
 
 if sys.version_info < (2, 7):
     sys.stderr.write("ERROR: SlurmScale requires at least Python ver 2.7\n")
@@ -18,8 +19,9 @@ with open(os.path.join('slurmscale', '__init__.py')) as f:
         if m:
             version = ast.literal_eval(m.group(1))
             break
-# pyslurm is also needed but it can only be installed on a system with Slurm
-base_reqs = ['click>=6.6', 'Cython>=0.24.1', 'cloudbridge']
+# - pyslurm also needs to be installed but it can only be installed on a system
+#   with Slurm; it should be installed manually into the current venv
+base_reqs = ['click>=6.6', 'Cython>=0.24.1', 'cloudbridge>=0.2.0']
 dev_reqs = (['tox>=2.3.1', 'sphinx>=1.4.8'] + base_reqs)
 
 setup(name='slurmscale',
@@ -46,8 +48,8 @@ setup(name='slurmscale',
           'Topic :: Software Development :: Libraries :: Python Modules',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: Implementation :: CPython',
           'Programming Language :: Python :: Implementation :: PyPy'],
       test_suite="test"
