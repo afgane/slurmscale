@@ -21,7 +21,9 @@ with open(os.path.join('slurmscale', '__init__.py')) as f:
             break
 # - pyslurm also needs to be installed but it can only be installed on a system
 #   with Slurm; it should be installed manually into the current venv
-base_reqs = ['click>=6.6', 'Cython>=0.24.1', 'cloudbridge>=0.2.0']
+base_reqs = ['Cython>=0.24.1', 'cloudbridge>=0.2.0']
+# Workaround for Keystone reqs: requests!=2.12.2,!=2.13.0,>=2.10.0
+base_reqs += ['requests==2.12.5']
 dev_reqs = (['tox>=2.3.1', 'sphinx>=1.4.8'] + base_reqs)
 
 setup(name='slurmscale',

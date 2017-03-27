@@ -11,15 +11,15 @@ provision_manager_name = JetstreamIUProvisionManager
 config_manager_name = GalaxyJetstreamIUConfigManager
 
 # Provider-specific ID of the image to be used for provisioning instances.
-# CentOS-7-x86_64-GenericCloud-1607 on Jetstream IU
-image_id = 1790e5c8-315a-4b9b-8b1f-46e47330d3cc
+# JS-API-Featured-Centos7-Feb-7-2017 on Jetstream IU
+image_id = 736e206d-9c2c-4369-88db-8c3293bd2ad7
 
 # Type of virtual machine to launch when creating instances.
 instance_type = m1.large
 
 # Provider-specific ID of the network within which to launch instances.
 # gxy-subnet on ..022 JS acct
-network_id = 04d0dbf2-c5c2-4c23-b9a9-16f9038f8dac
+subnet_id = 04d0dbf2-c5c2-4c23-b9a9-16f9038f8dac
 
 # SSH key pair to use when launching instances. The key pair must exist prior
 # to use.
