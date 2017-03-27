@@ -8,6 +8,10 @@ class Partition(object):
         """Initialize the current object."""
         self._partition = partition
 
+    def __repr__(self):
+        """Return human-readable Partition representation."""
+        return "<SS-Partition-{0}>".format(self.name)
+
     @property
     def name(self):
         """Name of the partition, as reported by Slurm."""

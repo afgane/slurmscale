@@ -11,7 +11,7 @@ class Node(object):
 
     def __repr__(self):
         """Return human-readable Node representation."""
-        return "<SS-Node-{0}>".format(self.name)
+        return "<SS-Node-{0} ({1})>".format(self.name, self.state)
 
     def __eq__(self, other):
         """Compare nodes based on their name and IP."""
@@ -25,6 +25,7 @@ class Node(object):
     @property
     def state(self):
         """Node state, as reported by Slurm."""
+        self.update()
         return self._node.get('state')
 
     @property
@@ -45,6 +46,12 @@ class Node(object):
         if rc == -1:
             return False
         return True
+
+    def update(self):
+        """
+        Refresh reference to the underlying node.
+        """
+        self._node = pyslurm.nodes().get_node(self.name)
 
     def enable(self):
         """

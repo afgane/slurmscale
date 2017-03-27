@@ -9,6 +9,10 @@ class Job(object):
         """Initialize the Job object."""
         self._job = job
 
+    def __repr__(self):
+        """Return human-readable Job representation."""
+        return "<SS-Job-{0} ({1})>".format(self.id, self.state)
+
     @property
     def id(self):
         """
