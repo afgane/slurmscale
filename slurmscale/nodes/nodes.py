@@ -170,13 +170,15 @@ class Nodes(object):
             nodes = [nodes]
         existing_nodes = set(self.list())
         keep_set = [node for node in existing_nodes if node not in nodes]
+        delete_nodes = []  # Keep a copy (node info no longer available later)
         for node in nodes:
+            delete_nodes.append(Bunch(name=node.name, ip=node.ip))
             node.disable(state=pyslurm.NODE_STATE_DOWN)
         ret_code, _ = self.configure(servers=keep_set)
         if ret_code == 0 and delete:
             log.debug("Reconfigured the cluster without node(s) {0}; deleting "
                       "the node(s) now.".format(nodes))
-            self._provision_manager.delete(nodes)
+            self._provision_manager.delete(delete_nodes)
             return True
         return False
 
