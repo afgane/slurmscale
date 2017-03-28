@@ -51,7 +51,7 @@ class Node(object):
         """
         Refresh reference to the underlying node.
         """
-        self._node = pyslurm.nodes().get_node(self.name)
+        self._node = pyslurm.node().get_node(self.name).get(self.name, {})
 
     def enable(self):
         """

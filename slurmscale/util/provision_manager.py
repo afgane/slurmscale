@@ -63,7 +63,7 @@ class JetstreamIUProvisionManager(ProvisionManager):
 
         # Configs come from slurmscale.ini config file
         self.image_id = ss.config.get_config_value(
-            'image_id', '1790e5c8-315a-4b9b-8b1f-46e47330d3cc')
+            'image_id', '736e206d-9c2c-4369-88db-8c3293bd2ad7')
         self.instance_type = ss.config.get_config_value(
             'instance_type', 'm1.large')
         self.subnet_id = ss.config.get_config_value(
@@ -71,7 +71,7 @@ class JetstreamIUProvisionManager(ProvisionManager):
         self.key_pair = ss.config.get_config_value(
             'key_pair', 'elasticity_kp')
         self.security_groups = ss.config.get_config_value(
-            'security_groups', ['gxy-workers-sg', 'gxy-sg'])
+            'security_groups', ['gxy-workers-sg'])
         if not isinstance(self.security_groups, list):
             self.security_groups = self.security_groups.split(',')
 
